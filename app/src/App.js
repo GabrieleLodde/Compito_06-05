@@ -9,10 +9,9 @@ function App() {
   const [tentativi, setTentativi] = useState();
   const [richiestaPut, setRichiestaPut] = useState(false);
   const [risultato, setRisultato] = useState();
-  const [showForm, setShowForm] = useState();
 
   //Variabili di stato per form
-  const [numeroInserito, setNumeroInserito] = useState();
+  const [numeroInserito, setNumeroInserito] = useState("");
 
   //Funzione per generare il numero casuale
   async function richiediNumero() {
@@ -43,10 +42,12 @@ function App() {
     setNumeroInserito(e.target.value)
   }
 
+  //Funzione per ripristinare la pagina
   function ripristinaPagina(){
     setStart(true);
     setRichiestaPut(false);
-    setRisultato(3);
+    setRisultato("");
+    setNumeroInserito("");
   }
 
   return (
@@ -70,23 +71,30 @@ function App() {
             <p>ID:{id}</p>
             <p>Tentativi:{tentativi}</p>
             <br />
-            <p>Inserisci un numero tra 1 e 100</p>
-            <input type='number' onChange={gestisciCambioNumero} value={numeroInserito} min={1} max={100} placeholder=""/>
-            {" "}
-            <button onClick={inviaNumero}>Invia</button>
+            {
+              risultato !== 0 &&
+              (
+                <>
+                <p>Inserisci un numero tra 1 e 100</p>
+                <input type='number' onChange={gestisciCambioNumero} value={numeroInserito} min={1} max={100} placeholder="Inserisci il numero"/>
+                {" "}
+                <button onClick={inviaNumero}>Invia</button>
+                </>
+              )
+            }
             {
               richiestaPut &&
                 <div>
-                { risultato === 1 &&
-                  <h3><b>TROPPO ALTO</b></h3>
-                }
-                { risultato === -1 &&
-                  <h3><b>TROPPO BASSO</b></h3>
-                }
-                { risultato === 0 &&
-                  <h3><b>HAI VINTO</b></h3>
-                }
-              </div>
+                  { risultato === 1 &&
+                    <h3><b>TROPPO ALTO</b></h3>
+                  }
+                  { risultato === -1 &&
+                    <h3><b>TROPPO BASSO</b></h3>
+                  }
+                  { risultato === 0 &&
+                    <h3><b>HAI VINTO</b></h3>
+                  }
+                </div>
             }
           </>
         )
