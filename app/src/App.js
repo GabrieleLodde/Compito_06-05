@@ -6,13 +6,15 @@ function App() {
   //Variabili di stato
   const [start, setStart] = useState(true);
   const [id, setId] = useState();
-  const [numeroIndovinare, setNumeroIndovinare] = useState();
   const [tentativi, setTentativi] = useState();
   const [richiestaPut, setRichiestaPut] = useState(false);
+  const [risultato, setRisultato] = useState();
+  const [showForm, setShowForm] = useState();
 
   //Variabili di stato per form
   const [numeroInserito, setNumeroInserito] = useState();
 
+  //Funzione per generare il numero casuale
   async function richiediNumero() {
     setStart(true);
     const response = await fetch(`http://localhost:8080/partita`, {
@@ -20,25 +22,32 @@ function App() {
     });
     const data = await response.json();
     setId(data.id);
-    setNumeroIndovinare(data.numero);
     setTentativi(data.tentativi);
     setStart(false);
   }
 
-  function gestisciCambioNumero(e) {
-    setNumeroInserito(e.target.value)
-  }
-
+  //Funzione per inviare il numero inserito
   async function inviaNumero(){
     const response = await fetch(`http://localhost:8080/partita/${id}`, {
       method: "PUT",
       headers: { "Content-type": "application/json" },
       body: JSON.stringify({ numero: numeroInserito })
     });
-    const value_response = await response.
+    const value_response = await response.json();
+    setTentativi(value_response.tentativi);
+    setRisultato(value_response.risultato);
     setRichiestaPut(true);
   }
 
+  function gestisciCambioNumero(e) {
+    setNumeroInserito(e.target.value)
+  }
+
+  function ripristinaPagina(){
+    setStart(true);
+    setRichiestaPut(false);
+    setRisultato(3);
+  }
 
   return (
     <div className="App">
@@ -54,28 +63,30 @@ function App() {
         :
         (
           <>
+            <h3>Indovina numero</h3>
+            <br />
+            <button onClick={ripristinaPagina}>Nuova partita</button>
+            <br />
+            <p>ID:{id}</p>
+            <p>Tentativi:{tentativi}</p>
+            <br />
+            <p>Inserisci un numero tra 1 e 100</p>
+            <input type='number' onChange={gestisciCambioNumero} value={numeroInserito} min={1} max={100} placeholder=""/>
+            {" "}
+            <button onClick={inviaNumero}>Invia</button>
             {
-              !richiestaPut ?
-              (
-                <>
-                  <h3>Indovina numero</h3>
-                  <br />
-                  <button onClick={() => setStart(true)}>Nuova partita</button>
-                  <br />
-                  <p>ID:{id}</p>
-                  <p>Tentativi:{tentativi}</p>
-                  <br />
-                  <p>Inserisci un numero tra 1 e 100</p>
-                  <input type='number' onChange={gestisciCambioNumero} value={numeroInserito} min={1}/>
-                  <button onClick={inviaNumero}>Invia</button>
-                </>
-              )
-              :
-              (
-                <>
-
-                </>
-              )
+              richiestaPut &&
+                <div>
+                { risultato === 1 &&
+                  <h3><b>TROPPO ALTO</b></h3>
+                }
+                { risultato === -1 &&
+                  <h3><b>TROPPO BASSO</b></h3>
+                }
+                { risultato === 0 &&
+                  <h3><b>HAI VINTO</b></h3>
+                }
+              </div>
             }
           </>
         )

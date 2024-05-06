@@ -36,3 +36,32 @@
     transform: rotate(360deg);
   }
 }
+
+body{
+  background-color: green;
+}
+
+h3{
+  color: purple;
+  font-size: 40px;
+}
+
+button{
+  font-size: 30px;
+  color: blue;
+  background-color: aquamarine;
+  border: 1px solid red;
+  border-radius: 5px;
+}
+
+p{
+  font-size: 30px;
+  color:darkred;
+}
+
+input{
+  font-size: 30px;
+  color:darkslateblue;
+  background-color: cyan;
+  border-radius: 5px;
+}
